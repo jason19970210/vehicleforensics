@@ -1,7 +1,8 @@
 # vehicleforensics
 a simple project which performs the vehicle data logging for digital forensics usage as PoC
 
-tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queue`, `RabbitMQ`
+tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queue`, `RabbitMQ`  
+
 ![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue)
 
 ## execution
