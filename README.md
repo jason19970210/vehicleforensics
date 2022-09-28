@@ -15,7 +15,7 @@ $ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
 docker & docker compose installation
 
 1. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
-2. https://docs.docker.com/compose/install/linux/
+2. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 ```
 
 ### clone project
