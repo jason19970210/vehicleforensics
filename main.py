@@ -3,20 +3,21 @@
 
 # from utils.watchdog import Watchdog
 import bluetooth as bt
+import os
+import sys
 import time
 from datetime import datetime
-import sys
 import subprocess
+from dotenv import load_dotenv
 import logging
+import config as cfg
 
-
-# Constants
-MAC_ADDR = '20:AA:39:BD:68:0A'
-# INIT_COMMAND_LIST = ['ATZ', 'ATE0', 'ATH1', 'ATL0', '0100']
-INIT_COMMAND_LIST = ['ATZ', 'ATE0', 'ATH1',
-                     'ATL0', 'CF7E8', 'CM7E8', 'CRA7E8', '0100']
-PID_COMMAND_LIST = ['04', '0C', '0D', '11', '1F', '42', '49', '4A']
-
+# Load .env & setup
+load_dotenv()
+MQ_IP = os.getenv('MQ_IP')
+MQ_USERNAME = os.getenv('MQ_USERNAME')
+MQ_PWD = os.getenv('MQ_PWD')
+MQ_QUEUE = os.getenv('MQ_QUEUE')
 
 # Logging Config
 # https://www.loggly.com/blog/4-reasons-a-python-logging-library-is-much-better-than-putting-print-statements-everywhere/#gist21143108
@@ -30,7 +31,6 @@ file_log = logging.FileHandler(f"debug_{datetime.now().strftime('%Y-%m-%d_%H:%M:
 file_log.setFormatter(logging.Formatter(format_str))
 log.addHandler(file_log)
 log.setLevel(logging.DEBUG)
-
 
 class Client:
     def __init__(self, mac, port=1):
@@ -46,7 +46,7 @@ class Client:
             log.info('Connection Established')
 
     def init(self):
-        for cmd in INIT_COMMAND_LIST:
+        for cmd in cfg.INIT_COMMAND_LIST:
             msg = (cmd + '\r').encode('utf-8')
             _ = self.send(msg)
 
@@ -74,14 +74,14 @@ class Client:
 
 
 def main():
-    client = Client(mac=MAC_ADDR)
+    client = Client(mac=cfg.MAC_ADDR)
     client.connect()
     time.sleep(0.2)  # Important
     client.init()
 
     while 1:
         try:
-            for pid in PID_COMMAND_LIST:
+            for pid in cfg.PID_COMMAND_LIST:
                 msg = ('01' + pid + '\r').encode('utf-8')
                 # with Watchdog(2):
                 #     res = client.send(msg)
