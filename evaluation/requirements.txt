@@ -1,0 +1,8 @@
+pika>=1.2.0
+pycryptodome>=3.14
+sympy>=1.9
+numpy>=1.22.4
+pandas>=1.4.2
+plotly>=5.8.0
+nbformat>=4.2.0
+kaleido>=0.2.1
