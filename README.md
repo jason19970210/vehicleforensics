@@ -11,6 +11,13 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 $ sudo apt update
 $ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
 ```
+```
+docker & docker compose installation
+
+1. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+2. https://docs.docker.com/compose/install/linux/
+```
+
 ### clone project
 ```shell=
 $ git clone git@github.com:jason19970210/vehicleforensics.git
@@ -36,4 +43,17 @@ $
 ### setup virtual environment dependencies
 ```shell=
 (vehicleforensics) $ pip3 install -r requirements.txt
+```
+
+### start / stop rabbitmq
+```shell=
+$ docker-compose up -d
+```
+```shell=
+$ docker-compose down
+```
+
+#### check docker-compose container status
+```shell=
+$ docker-compose ps
 ```
