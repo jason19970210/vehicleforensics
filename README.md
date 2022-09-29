@@ -5,47 +5,71 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 
 ![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue)
 
+## ToDo
+
+- [ ] NTRU Implementation
+- [ ] Falcon Implementation
+- [ ] MQTT Implementation
+- [ ] Database ImplementationF
+
 ## execution
-### pre-requirements
-```shell=
-$ sudo apt update
-$ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
-```
-```
-docker & docker compose installation
-
-1. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
-2. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
-```
-
 ### clone project
+
 ```shell=
 $ git clone git@github.com:jason19970210/vehicleforensics.git
 ```
-### create a virtual environment
+
+### virtual environment
+#### pre-requirements
+
+```shell=
+$ python3 --version
+```
+
+#### create
+
 ```shell=
 $ python3 -m venv vehicleforensics
 
 $ cd vehicleforensics
 $ sudo chmod +x ./bin/activate
 ```
-### enter virtual environment
+
+#### enter virtual environment
+
 ```shell=
 $ source ./bin/activate
 (vehicleforensics) $
 ```
-### exit virtual environment
+
+#### install dependencies
+
+```shell=
+(vehicleforensics) $ pip3 install -r requirements.txt
+```
+
+#### exit
+
 ```shell=
 (vehicleforensics) $ deactivate
 $ 
 ```
 
-### setup virtual environment dependencies
+### server side setup
+#### pre-requirements
+
 ```shell=
-(vehicleforensics) $ pip3 install -r requirements.txt
+$ sudo apt update
+$ sudo apt install -y python3-pip 
 ```
 
+#### docker & docker compose installation
+
+1. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+2. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
+
 ### start / stop rabbitmq
+
 ```shell=
 $ docker-compose up -d
 ```
@@ -54,6 +78,27 @@ $ docker-compose down
 ```
 
 #### check docker-compose container status
+
 ```shell=
 $ docker-compose ps
+```
+
+#### start main script
+
+```shell=
+(vehicleforensics) $ python3 server_main.py
+```
+
+## client side
+#### pre-requirements
+
+```shell=
+$ sudo apt update
+$ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
+```
+
+#### start main script
+
+```
+(vehicleforensics)$ python3 client_main.py
 ```
