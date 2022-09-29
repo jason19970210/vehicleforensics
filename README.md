@@ -10,7 +10,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 - [ ] NTRU Implementation
 - [ ] Falcon Implementation
 - [ ] MQTT Implementation
-- [ ] Database ImplementationF
+- [ ] Database Implementation
 
 ## execution
 ### clone project
