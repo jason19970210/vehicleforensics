@@ -68,7 +68,7 @@ $ sudo apt install -y python3-pip
 1. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 2. https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 
-### start / stop rabbitmq
+### start / stop rabbitmq container
 
 ```shell=
 $ docker-compose up -d
