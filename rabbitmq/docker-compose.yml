@@ -1,38 +1,24 @@
-version: "3"
+version: "3.2"
 services:
-    rabbit1:
-        image: lucifer8591/rabbitmq-server:3.7.17
-        hostname: rabbit1
-        ports:
-            - "5672:5672"
-            # - "15672:15672" # for web console
-            - "8080:15672"
-        environment:  
-            - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
-            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
-    rabbit2:  
-        image: lucifer8591/rabbitmq-server:3.7.17
-        hostname: rabbit2
-        links:    
-            - rabbit1 
-        environment:
-            - CLUSTERED=true    
-            - CLUSTER_WITH=rabbit1    
-            - RAM_NODE=true  
-        ports:    
-            - "5673:5672"    
-            # - "15673:15672" # for web console
-    rabbit3:   
-        image: lucifer8591/rabbitmq-server:3.7.17
-        hostname: rabbit3
-        links:    
-            - rabbit1    
-            - rabbit2   
-        environment:    
-            - CLUSTERED=true    
-            - CLUSTER_WITH=rabbit1   
-        ports:
-            - "5674:5672"
+  rabbitmq:
+    image: rabbitmq:${RABBITMQ_DOCKER_TAG}
+    container_name: 'rabbitmq'
+    ports:
+        - ${RABBITMQ_PORT}:5672
+        - ${RABBITMQ_WEB_PORT}:15672
+    volumes:
+        - ${RABBITMQ_DEFAULT_DATA_VOLUMN}:/var/lib/rabbitmq/
+        - ${RABBITMQ_DEFAULT_LOG_VOLUMN}:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+    environment:
+        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
+
 
 # `RAM_NODE` ref please check https://github.com/kailashyogeshwar85/docker-rabbitmq-cluster/blob/be440316dd9747667af913f67911bcafa610fbc0/server/startrabbit.sh 
 # at line 44 
