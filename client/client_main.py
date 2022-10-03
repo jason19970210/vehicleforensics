@@ -14,10 +14,10 @@ import config as cfg
 
 # Load .env & setup
 load_dotenv()
-MQ_IP = os.getenv('MQ_IP')
-MQ_USERNAME = os.getenv('MQ_USERNAME')
-MQ_PWD = os.getenv('MQ_PWD')
-MQ_QUEUE = os.getenv('MQ_QUEUE')
+RABBITMQ_IP = os.getenv('RABBITMQ_IP')
+RABBITMQ_USERNAME = os.getenv('RABBITMQ_USERNAME')
+RABBITMQ_PWD = os.getenv('RABBITMQ_PWD')
+RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE')
 
 # Logging Config
 # https://www.loggly.com/blog/4-reasons-a-python-logging-library-is-much-better-than-putting-print-statements-everywhere/#gist21143108
