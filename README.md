@@ -6,11 +6,15 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 ![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue)
 
 ## ToDo
-
+### Client Side
 - [ ] NTRU Implementation
 - [ ] Falcon Implementation
-- [ ] MQTT Implementation
-- [ ] Database Implementation
+- [ ] RabbitMQ Implementation
+### Server Side
+- [ ] NTRU Implementation
+- [ ] Falcon Implementation
+- [ ] RabbitMQ Implementation
+- [ ] MongoDB Implementation
 
 ## execution
 ### clone project
