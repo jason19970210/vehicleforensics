@@ -2,18 +2,18 @@ version: "3.2"
 services:
   rabbitmq:
     image: rabbitmq:${RABBITMQ_DOCKER_TAG}
-    container_name: 'rabbitmq'
+    container_name: ${RABBITMQ_CONTAINER_NAME}
     ports:
-        - ${RABBITMQ_PORT}:5672
-        - ${RABBITMQ_WEB_PORT}:15672
+      - ${RABBITMQ_PORT}:5672
+      - ${RABBITMQ_WEB_PORT}:15672
     volumes:
-        - ${RABBITMQ_DEFAULT_DATA_VOLUMN}:/var/lib/rabbitmq/
-        - ${RABBITMQ_DEFAULT_LOG_VOLUMN}:/var/log/rabbitmq
+      - ${RABBITMQ_VOLUMN}/${RABBITMQ_CONTAINER_NAME}/data/:/var/lib/rabbitmq/
+      - ${RABBITMQ_VOLUMN}/${RABBITMQ_CONTAINER_NAME}/log/:/var/log/rabbitmq
     networks:
-        - rabbitmq_go_net
+      - rabbitmq_go_net
     environment:
-        RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-        RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
 
 networks:
   rabbitmq_go_net:

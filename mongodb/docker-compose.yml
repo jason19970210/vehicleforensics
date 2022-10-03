@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  mongodb:
+    
+    image: mongo:${MONGODB_DOCKER_TAG}
+    container_name: ${MONGODB_CONTAINER_NAME}
+    
+    ports:
+      - ${MONGODB_PORT}:27017
+    
+    volumes:
+      - ${MONGODB_VOLUMN}/${MONGODB_CONTAINER_NAME}/data/:/data/db
+    
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_INITDB_ROOT_PASSWORD}
+      - bind_ip=${MONGODB_BINDIP}
