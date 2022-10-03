@@ -10,11 +10,11 @@ services:
       - ${MONGODB_PORT}:27017
     
     volumes:
-      - ./${MONGODB_CONF}:/etc/mongod.conf
+      - ./utils/${MONGODB_CONF}:/etc/mongod.conf
       - ${MONGODB_VOLUMN}/${MONGODB_CONTAINER_NAME}/data/:/data/db
     
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_INITDB_ROOT_PASSWORD}
       - MONGO_INITDB_DATABASE=${MONGODB_INITDB_DATABASE}
-    command: ["-f", "/etc/mongod.conf"]
+    #command: ["-f", "/etc/mongod.conf"]
