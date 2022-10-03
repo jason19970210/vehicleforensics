@@ -10,7 +10,7 @@ services:
       - ${MONGODB_PORT}:27017
     
     volumes:
-      - ./utils/${MONGODB_CONF}:/etc/mongod.conf
+      #- ./utils/${MONGODB_CONF}:/etc/mongod.conf
       - ${MONGODB_VOLUMN}/${MONGODB_CONTAINER_NAME}/data/:/data/db
     
     environment:
