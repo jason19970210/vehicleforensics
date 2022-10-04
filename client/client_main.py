@@ -15,6 +15,7 @@ import config as cfg
 # Load .env & setup
 load_dotenv()
 RABBITMQ_IP = os.getenv('RABBITMQ_IP')
+RABBITMQ_PORT = os.getenv('RABBITMQ_PORT')
 RABBITMQ_USERNAME = os.getenv('RABBITMQ_USERNAME')
 RABBITMQ_PWD = os.getenv('RABBITMQ_PWD')
 RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE')
