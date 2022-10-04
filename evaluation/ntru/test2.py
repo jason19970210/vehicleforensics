@@ -69,7 +69,7 @@ def main():
     # desirePIDList = ['0C', '0D']
 
     # Data init
-    data = f"{time.time()},04:A,0C:AA,0D:A,11:A"
+    data = ",04:A,0C:AA,0D:A,11:A"
     # data = "Ass"
     # data = "1654273410.7560978,b'NIhMjsINY1rsvG7W7PcKbk3Gsie7h8wXHcIGWDysbpwBrDGw4nSzyPyESVD2DLo1lDsNWpjdw+SKh+TiQAAA',PID1:AAAA"
     # data = "NIhMjsINY1rsvG7W7PcKbk3Gsie7h8wXHcIGWDysbpwBrDGw4nSzyPyESVD2DLo1lDsNWpjdw+SKh+TiQAA"
@@ -81,7 +81,7 @@ def main():
 
     i = 0
 
-    while i <= TEST_N:
+    while i < TEST_N:
         t = timer()
         
         print(f"data: {data}")
@@ -105,7 +105,7 @@ def main():
         plainText = ntruDecrypt(cipher_polys, SNSK, n)
         # print(f"message decrypted: {plainText}")
 
-        print(plainText == data)
+        print(f"result: {plainText == data}")
 
         elaspsed_time = timer() - t
         eval_data = {'Method': ['NTRU'], 'PID Length': [f'{i}'],
