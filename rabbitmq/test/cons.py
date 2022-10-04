@@ -7,8 +7,10 @@ from dotenv import load_dotenv
 import binascii
 import pika
 
-RABBIRMQ_HOST = os.getenv("RABBIRMQ_HOST")
-RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
+load_dotenv()
+
+RABBIRMQ_HOST = os.getenv("RABBITMQ_HOST")
+RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
 
 RABBITMQ_USERNAME = os.getenv("RABBITMQ_DEFAULT_USER")
 RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
