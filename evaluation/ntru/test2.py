@@ -76,7 +76,7 @@ def main():
     # data = b'4\x16\xcc[Z2\xe8\xaf8\xcd\xab\xd5\x9e\xb5X \x89\x8dh)Cv\x94\xff\xdb\x01!\xb6\xb1W\xd0_&{z\x92\xf6<\xb8\xbeV%\xca\x9a\xbeGoI\xad\xa0\xacU|EYdd\xe1"?\x00\x00\x00'
 
     ## will cause decrypt failed data
-    data = "{}"
+    data = f"{{}}" ## Due to 'f string', the output will be '{}' as well
 
     # create a empty dataframe with columns
     df = pd.DataFrame(columns=['Method', 'PID Length', 'Elasped Time (sec)'])
