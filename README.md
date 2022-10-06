@@ -5,6 +5,16 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 
 ![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue)
 
+## ToC
+- [Todo](#todo)
+    - [client side](#client-side)
+    - [server side](#server-side)
+- [execution](#execution)
+    - [clone project](#clone-project)
+    - [virtual environment](#virtual-environment)
+    - [server side setup](#server-side-setup)
+    - [client side setup](#client-side-setup)
+
 ## ToDo
 ### Client Side
 - [ ] NTRU Implementation
@@ -93,7 +103,7 @@ $ docker-compose ps
 (vehicleforensics) $ python3 server_main.py
 ```
 
-## client side
+### client side setup
 #### pre-requirements
 
 ```shell=
