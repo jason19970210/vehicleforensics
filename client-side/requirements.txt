@@ -1,6 +1,6 @@
 pika>=1.2.0
 pycryptodome>=3.14
-sympy>=1.9
+sympy>=1.11.1
 numpy>=1.22
 pymongo>=4.2.0
 pybluez>=0.23
