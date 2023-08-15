@@ -1,8 +1,10 @@
 version: "3.2"
 services:
   rabbitmq:
+    hostname: ${RABBITMQ_CONTAINER_NAME}
     image: rabbitmq:${RABBITMQ_DOCKER_TAG}
     container_name: ${RABBITMQ_CONTAINER_NAME}
+    restart: always
     ports:
       - ${RABBITMQ_PORT}:5672
       - ${RABBITMQ_WEB_PORT}:15672
@@ -14,11 +16,15 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_ERLANG_COOKIE: "erlang-cookie"
 
 networks:
   rabbitmq_go_net:
     driver: bridge
 
+
+# for queue data persistent
+# https://www.futurefundamentals.com/set-rabbitmq-with-data-persistent-with-docker-compose/
 
 # `RAM_NODE` ref please check https://github.com/kailashyogeshwar85/docker-rabbitmq-cluster/blob/be440316dd9747667af913f67911bcafa610fbc0/server/startrabbit.sh 
 # at line 44 

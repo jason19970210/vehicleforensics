@@ -24,14 +24,20 @@ def main():
     connection = pika.BlockingConnection(all_parm)
     channel = connection.channel()
 
-    channel.queue_declare(queue=RABBITMQ_QUEUE)
+    channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True)
+
+    prop = pika.BasicProperties(content_type='application/json',
+                                content_encoding='utf-8',
+                                # headers={'key': 'value'},
+                                delivery_mode = 2,
+                               )
 
     while True:
-        channel.basic_publish(exchange='', routing_key=RABBITMQ_QUEUE, body=datetime.now().strftime('%H:%M:%S'))
+        channel.basic_publish(exchange='', routing_key=RABBITMQ_QUEUE, body=datetime.now().strftime('%H:%M:%S'), properties=prop)
         # print(" [x] Message Sent")
 
-        time.sleep(0.0001)
-        # time.sleep(2)
+        # time.sleep(0.0001)
+        time.sleep(2)
 
 
 if __name__ == '__main__':
