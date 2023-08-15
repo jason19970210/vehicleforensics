@@ -34,13 +34,13 @@ def main():
 
     def callback(ch, method, properties, body):
 
-        # print(" [x] Received %r" % body)
+        print(" [x] Received %r" % body)
         # time.sleep(2)
 
-        tmp = json.loads(body.decode())
-        cipher_polys = ast.literal_eval(tmp["cipherPolys"])
-        signature = binascii.unhexlify(tmp["sign"])
-        print(f"\ncipher_polys : {cipher_polys}\n\nsignature : {signature}")
+        # tmp = json.loads(body.decode())
+        # cipher_polys = ast.literal_eval(tmp["cipherPolys"])
+        # signature = binascii.unhexlify(tmp["sign"])
+        # print(f"\ncipher_polys : {cipher_polys}\n\nsignature : {signature}")
 
         pass
 

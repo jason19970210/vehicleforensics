@@ -28,10 +28,10 @@ def main():
 
     while True:
         channel.basic_publish(exchange='', routing_key=RABBITMQ_QUEUE, body=datetime.now().strftime('%H:%M:%S'))
-        print(" [x] Message Sent")
+        # print(" [x] Message Sent")
 
-        # time.sleep(0.0001)
-        time.sleep(2)
+        time.sleep(0.0001)
+        # time.sleep(2)
 
 
 if __name__ == '__main__':
