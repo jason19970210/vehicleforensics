@@ -8,7 +8,7 @@ services:
       - ${RABBITMQ_WEB_PORT}:15672
     volumes:
       - ${RABBITMQ_VOLUMN}/${RABBITMQ_CONTAINER_NAME}/data/:/var/lib/rabbitmq/
-      - ${RABBITMQ_VOLUMN}/${RABBITMQ_CONTAINER_NAME}/log/:/var/log/rabbitmq
+      - ${RABBITMQ_VOLUMN}/${RABBITMQ_CONTAINER_NAME}/log/:/var/log/rabbitmq/
     networks:
       - rabbitmq_go_net
     environment:
@@ -24,3 +24,8 @@ networks:
 # at line 44 
 #
 # [-z $VAR] return `True` if VAR is null
+
+# Error while log/ permission error
+# https://github.com/docker-library/rabbitmq/issues/530
+# `$ cd <volume_path>/`
+# `$ sudo chown -R systemd-network:root log/`
