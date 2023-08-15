@@ -25,6 +25,8 @@ networks:
 
 # for queue data persistent
 # https://www.futurefundamentals.com/set-rabbitmq-with-data-persistent-with-docker-compose/
+# https://stackoverflow.com/questions/65614847/rabbitmq-pika-basicproperties-dont-send-properties-in-message
+# https://www.cnblogs.com/xiangsikai/p/8289365.html
 
 # `RAM_NODE` ref please check https://github.com/kailashyogeshwar85/docker-rabbitmq-cluster/blob/be440316dd9747667af913f67911bcafa610fbc0/server/startrabbit.sh 
 # at line 44 
