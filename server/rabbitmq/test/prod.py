@@ -29,7 +29,7 @@ def main():
     prop = pika.BasicProperties(content_type='application/json',
                                 content_encoding='utf-8',
                                 # headers={'key': 'value'},
-                                delivery_mode = 2,
+                                delivery_mode = pika.DeliveryMode.Persistent, # 2
                                )
 
     while True:
