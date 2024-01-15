@@ -1,9 +1,3 @@
-import ntru_config as config
-
-from ntru_utils.NtruEncrypt import *
-from ntru_utils.Polynomial import Zx
-from ntru_utils.num_to_polynomial import *
-
 import time
 import json
 from hashlib import sha3_256
@@ -11,9 +5,21 @@ from datetime import datetime, timedelta
 from timeit import default_timer as timer
 import pandas as pd
 
+# add utils folder to sys path
+import sys
+from pathlib import Path
+sys.path.append(Path(__file__).parents[2].as_posix())
+
+from utils.ntru_utils.NtruEncrypt import *
+from utils.ntru_utils.Polynomial import Zx
+from utils.ntru_utils.num_to_polynomial import *
+
+import ntru_nconfig as nconfig
+
+
 TEST_N = 1
 
-SNPK, SNSK = generate_keypair(config.N_P, config.N_Q, config.N_D, config.N_N)
+SNPK, SNSK = generate_keypair(nconfig.N_P, nconfig.N_Q, nconfig.N_D, nconfig.N_N)
 
 # print(SNPK)
 
@@ -37,7 +43,7 @@ def concatDataFrame(df, data):
 def ntruTrans(message):
     # print(message)
     characterPolynomials, N = koblitz_encoder(
-        message, config.N_elliptic_a, config.N_elliptic_b)
+        message, nconfig.N_elliptic_a, nconfig.N_elliptic_b)
     return characterPolynomials, N
 
 
@@ -46,7 +52,7 @@ def ntruEncrypt(message, publicKey):
     characterPolynomials, N = ntruTrans(message)
     cipher_polys = []
     for element in characterPolynomials:
-        cipher_text = encrypt(element, publicKey, config.N_D, N, config.N_Q)
+        cipher_text = encrypt(element, publicKey, nconfig.N_D, N, nconfig.N_Q)
         cipher_polys.append(cipher_text)
     return cipher_polys, N
 
@@ -55,7 +61,7 @@ def ntruDecrypt(cipherPolys, privateKey, n):
     dec_w = []
     for element in cipherPolys:
         decrypted_message = decrypt(
-            element, privateKey, config.N_P, config.N_Q, n)
+            element, privateKey, nconfig.N_P, nconfig.N_Q, n)
         # print(decrypted_message.print_polynomial())
         dec_w.append(decrypted_message.coeffs)
     decrypted_plain_text = koblitz_decoder(points_decoder(dec_w))

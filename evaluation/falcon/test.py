@@ -1,19 +1,23 @@
+import sys
 import time
 from datetime import timedelta
 from timeit import default_timer as timer
 import pandas as pd
 from hashlib import sha3_256
 
-from falcon_utils import falcon
+# add utils folder to sys path
+from pathlib import Path
+sys.path.append(Path(__file__).parents[2].as_posix())
+
+from utils.falcon_utils import falcon
 import falcon_config as fconfig
 
-from ntru_utils.NtruEncrypt import *
-from ntru_utils.Polynomial import Zx
-from ntru_utils.num_to_polynomial import *
+from utils.ntru_utils.NtruEncrypt import *
+from utils.ntru_utils.Polynomial import Zx
+from utils.ntru_utils.num_to_polynomial import *
 import ntru_config as nconfig
 
-
-# Falcon Public Param.
+# Falcon Public Param
 # CFSK_N = config.F_N
 
 # Falcon Secret Param. aka Secret Key
@@ -26,13 +30,11 @@ CFPK = falcon.PublicKey(fconfig.F_N, CFSK.h)
 
 
 # NTRU
-SNPK, SNSK = generate_keypair(
-    nconfig.N_P, nconfig.N_Q, nconfig.N_D, nconfig.N_N)
+SNPK, SNSK = generate_keypair(nconfig.N_P, nconfig.N_Q, nconfig.N_D, nconfig.N_N)
 
 TEST_N = 2
 
-
-def concatDataFrame(df, data):
+def concatDataFrame(df, data) -> pd.DataFrame:
     df = pd.concat([df, pd.DataFrame(data)], ignore_index=True)
     return df
 
@@ -67,7 +69,8 @@ def ntruDecrypt(cipherPolys, privateKey, n):
 
 def main():
 
-    m_str = f"{time.time()}"
+    # m_str = f"{time.time()}"
+    m_str = f"{time.time()},04:A,0C:AA,0D:A,11:A"
 
     i = 0
 
@@ -90,7 +93,6 @@ def main():
         sign_elapsed_time = timer() - t
 
         # encrypt
-        # print(m_str)
         t = timer()
         e_polys, e_n = ntruEncrypt(m_str, SNPK)
         encrypt_elapsed_time = timer() - t
@@ -98,8 +100,6 @@ def main():
         e_list = []
         for e_poly in e_polys:
             e_list.append(e_poly.coeffs)
-
-        # print(e_n) # 14
 
         # decrypt
         t = timer()
@@ -120,26 +120,26 @@ def main():
         print(f"message: {m_str}\nhashed: {h_byt}\nsigned: {s_byt}\nencrypted: {e_list}\ndecrypted: {d_str}\nverified: {v_bool}")
 
 
-        elaspsed_time = [timedelta(seconds=hash_elapsed_time).total_seconds(), timedelta(seconds=sign_elapsed_time).total_seconds(), 
-                timedelta(seconds=encrypt_elapsed_time).total_seconds(), timedelta(seconds=decrypt_elapsed_time).total_seconds(), timedelta(seconds=verify_elapsed_time).total_seconds()]
-        eval_data = {'Method': ['Full'], 
-                     'PID Length': [f'{i}'],
-                     'Elasped Time': [elaspsed_time[0]+elaspsed_time[1]+elaspsed_time[2]+elaspsed_time[3]+elaspsed_time[4]],
-                     'Hash Elapsed': [elaspsed_time[0]],
-                     'Sign Elapsed': [elaspsed_time[1]],
-                     'Encr Elapsed': [elaspsed_time[2]],
-                     'Decr Elapsed': [elaspsed_time[3]],
-                     'Veri Elapsed': [elaspsed_time[4]],
-                    }
+        # elaspsed_time = [timedelta(seconds=hash_elapsed_time).total_seconds(), timedelta(seconds=sign_elapsed_time).total_seconds(), 
+        #         timedelta(seconds=encrypt_elapsed_time).total_seconds(), timedelta(seconds=decrypt_elapsed_time).total_seconds(), timedelta(seconds=verify_elapsed_time).total_seconds()]
+        # eval_data = {'Method': ['Full'], 
+        #              'PID Length': [f'{i}'],
+        #              'Elasped Time': [elaspsed_time[0]+elaspsed_time[1]+elaspsed_time[2]+elaspsed_time[3]+elaspsed_time[4]],
+        #              'Hash Elapsed': [elaspsed_time[0]],
+        #              'Sign Elapsed': [elaspsed_time[1]],
+        #              'Encr Elapsed': [elaspsed_time[2]],
+        #              'Decr Elapsed': [elaspsed_time[3]],
+        #              'Veri Elapsed': [elaspsed_time[4]],
+        #             }
 
-        df = concatDataFrame(df, eval_data)
+        # df = concatDataFrame(df, eval_data)
 
         # ====== Next Loop ======
         i += 1
-        m_str += f",PID{i}:AAAA"  # `PID` must be capital for NTRU
+    #     m_str += f",PID{i}:AAAA"  # `PID` must be capital for NTRU
 
-    print(df.tail())
-    df.to_csv('full_n100_server.csv', index=False)
+    # print(df.tail())
+    # df.to_csv('full_n100_server.csv', index=False)
 
 if __name__ == '__main__':
     main()
