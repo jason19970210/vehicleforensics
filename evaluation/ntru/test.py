@@ -14,7 +14,7 @@ from utils.ntru_utils.NtruEncrypt import *
 from utils.ntru_utils.Polynomial import Zx
 from utils.ntru_utils.num_to_polynomial import *
 
-import ntru_nconfig as nconfig
+import ntru_config as nconfig
 
 
 TEST_N = 1
