@@ -1,13 +1,8 @@
-# add utils folder to sys path
-import sys
-from pathlib import Path
-sys.path.append(Path(__file__).parents[2].as_posix())
-
 import ntru_config as config
 
-from utils.ntru_utils.NtruEncrypt import *
-from utils.ntru_utils.Polynomial import Zx
-from utils.ntru_utils.num_to_polynomial import *
+from ntru_utils.NtruEncrypt import *
+from ntru_utils.Polynomial import Zx
+from ntru_utils.num_to_polynomial import *
 
 import time
 import json
@@ -19,6 +14,19 @@ import pandas as pd
 TEST_N = 1
 
 SNPK, SNSK = generate_keypair(config.N_P, config.N_Q, config.N_D, config.N_N)
+
+# print(SNPK)
+
+# data = {
+#     "timestamp": time.time(),
+#     "pid": {},
+# }
+
+# data = f"{time.time()}"
+# data = f"{datetime.now()}:31:AB"
+# data = f"{time.time()}:31:ABAA:DDAA:0CAA:E4AA:23AA"
+
+# print(f"{data}")
 
 
 def concatDataFrame(df, data):
