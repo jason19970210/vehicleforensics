@@ -15,6 +15,7 @@ RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
 RABBITMQ_USERNAME = os.getenv("RABBITMQ_DEFAULT_USER")
 RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
 
+RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE")
 
 
@@ -30,11 +31,13 @@ def main():
     connection = pika.BlockingConnection(all_parm)
     channel = connection.channel()
 
-    channel.queue_declare(queue=RABBITMQ_QUEUE)
+    channel.exchange_declare(exchange=RABBITMQ_EXCHANGE, exchange_type="topic", durable=True)
+    channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True, exclusive=False, auto_delete=False)
+    channel.queue_bind(exchange=RABBITMQ_EXCHANGE, queue=RABBITMQ_QUEUE, routing_key="#", arguments=None)
 
     def callback(ch, method, properties, body):
 
-        print(" [x] Received %r" % body)
+        print(f" [x] Received: {method.routing_key=}, {body=}")
         # time.sleep(2)
 
         # tmp = json.loads(body.decode())
