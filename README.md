@@ -86,9 +86,10 @@ error: metadata-generation-failed
 hint: See above for details.
 ```
 Solution:
-> with `Microsoft Visual C++ 14.0 or greater is required`, link: https://my.visualstudio.com/Downloads?q=Visual%20C++%20Build%20Tools, download with `DVD (ISO)` format as offline installation
-> ref: https://benjenq.pixnet.net/blog/post/47913350-%E3%80%90%E7%A2%BC%E8%BE%B2%E3%80%91%E5%9C%A8-windows-%E5%B9%B3%E5%8F%B0%E4%B8%8A%E8%A7%A3%E6%B1%BA-pip-%E5%AE%89%E8%A3%9D%E5%A5%97%E4%BB%B6%E5%87%BA
-ref: https://github.com/pybluez/pybluez/issues/431#issuecomment-1107884273
+> with `Microsoft Visual C++ 14.0 or greater is required`, link: https://my.visualstudio.com/Downloads?q=Visual%20C++%20Build%20Tools, download with `DVD (ISO)` format as offline installation  
+
+> ref: https://benjenq.pixnet.net/blog/post/47913350-%E3%80%90%E7%A2%BC%E8%BE%B2%E3%80%91%E5%9C%A8-windows-%E5%B9%B3%E5%8F%B0%E4%B8%8A%E8%A7%A3%E6%B1%BA-pip-%E5%AE%89%E8%A3%9D%E5%A5%97%E4%BB%B6%E5%87%BA  
+> ref: https://github.com/pybluez/pybluez/issues/431#issuecomment-1107884273
 ```
 > pip install git+https://github.com/pybluez/pybluez.git#egg=pybluez
 ```
