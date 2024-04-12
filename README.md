@@ -62,38 +62,6 @@ $ source ./bin/activate
 (.venv) $ pip3 install -r requirements.txt
 ```
 
-##### FAQ
-1. Error when `pip install pybluez`
-env: Windows 10
-```
-> pip install pybluez
-
-Collecting pybluez>=0.23
-  Using cached PyBluez-0.23.tar.gz (97 kB)
-  error: subprocess-exited-with-error
-
-  × python setup.py egg_info did not run successfully.
-  │ exit code: 1
-  ╰─> [1 lines of output]
-      error in PyBluez setup command: use_2to3 is invalid.
-
-  note: This error originates from a subprocess, and is likely not a problem with pip.
-error: metadata-generation-failed
-
-× Encountered error while generating package metadata.
-╰─> See above for output.
-
-hint: See above for details.
-```
-Solution:
-> with `Microsoft Visual C++ 14.0 or greater is required`, link: https://my.visualstudio.com/Downloads?q=Visual%20C++%20Build%20Tools, download with `DVD (ISO)` format as offline installation  
-
-> ref: https://benjenq.pixnet.net/blog/post/47913350-%E3%80%90%E7%A2%BC%E8%BE%B2%E3%80%91%E5%9C%A8-windows-%E5%B9%B3%E5%8F%B0%E4%B8%8A%E8%A7%A3%E6%B1%BA-pip-%E5%AE%89%E8%A3%9D%E5%A5%97%E4%BB%B6%E5%87%BA  
-> ref: https://github.com/pybluez/pybluez/issues/431#issuecomment-1107884273
-```
-> pip install git+https://github.com/pybluez/pybluez.git#egg=pybluez
-```
-
 #### exit
 
 ```shell=
@@ -147,4 +115,37 @@ $ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
 
 ```
 (.venv)$ python3 client_main.py
+```
+
+
+## FAQ
+### 1. Error when `pip install pybluez`
+    > env: Windows 10
+```
+> pip install pybluez
+
+Collecting pybluez>=0.23
+  Using cached PyBluez-0.23.tar.gz (97 kB)
+  error: subprocess-exited-with-error
+
+  × python setup.py egg_info did not run successfully.
+  │ exit code: 1
+  ╰─> [1 lines of output]
+      error in PyBluez setup command: use_2to3 is invalid.
+
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> See above for output.
+
+hint: See above for details.
+```
+Solution:
+> with `Microsoft Visual C++ 14.0 or greater is required`, link: https://my.visualstudio.com/Downloads?q=Visual%20C++%20Build%20Tools, download with `DVD (ISO)` format as offline installation  
+
+> ref: https://benjenq.pixnet.net/blog/post/47913350-%E3%80%90%E7%A2%BC%E8%BE%B2%E3%80%91%E5%9C%A8-windows-%E5%B9%B3%E5%8F%B0%E4%B8%8A%E8%A7%A3%E6%B1%BA-pip-%E5%AE%89%E8%A3%9D%E5%A5%97%E4%BB%B6%E5%87%BA  
+> ref: https://github.com/pybluez/pybluez/issues/431#issuecomment-1107884273
+```
+> pip install git+https://github.com/pybluez/pybluez.git#egg=pybluez
 ```
