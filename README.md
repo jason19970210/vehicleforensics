@@ -17,12 +17,14 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 
 ## ToDo
 ### Client Side
-- [ ] NTRU Implementation
+- [ ] ~~NTRU Implementation~~ (Deprecated, due to unselected from NIST PQC in Round 4)
 - [ ] Falcon Implementation
+- [ ] Kyber Implementation
 - [ ] RabbitMQ Implementation
 ### Server Side
-- [ ] NTRU Implementation
+- [ ] ~~NTRU Implementation~~ (Deprecated, due to unselected from NIST PQC in Round 4)
 - [ ] Falcon Implementation
+- [ ] Kyber Implementation
 - [ ] RabbitMQ Implementation
 - [ ] MongoDB Implementation
 
