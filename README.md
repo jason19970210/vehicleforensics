@@ -36,6 +36,8 @@ $ git clone --recurse-submodules git@github.com:jason19970210/.venv.git
 ```
 
 ### virtual environment
+for both `server-side` & `client-side`
+
 #### pre-requirements
 
 ```shell=
@@ -61,7 +63,11 @@ $ source ./bin/activate
 #### install dependencies
 
 ```shell=
+## for main service
 (.venv) $ pip3 install -r requirements.txt
+
+## for kyber
+(.venv) $ pip3 install -r ./utils/kyber_utils/requirements.txt
 ```
 
 #### exit
