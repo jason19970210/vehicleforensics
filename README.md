@@ -1,4 +1,4 @@
-# vehicleforensics
+# .venv
 a simple project which performs the vehicle data logging for digital forensics usage as PoC
 
 tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queue`, `RabbitMQ`  
@@ -30,7 +30,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 ### clone project
 
 ```shell=
-$ git clone --recurse-submodules git@github.com:jason19970210/vehicleforensics.git
+$ git clone --recurse-submodules git@github.com:jason19970210/.venv.git
 ```
 
 ### virtual environment
@@ -43,9 +43,9 @@ $ python3 --version
 #### create
 
 ```shell=
-$ python3 -m venv vehicleforensics
+$ python3 -m venv .venv
 
-$ cd vehicleforensics
+$ cd .venv
 $ sudo chmod +x ./bin/activate
 ```
 
@@ -53,13 +53,13 @@ $ sudo chmod +x ./bin/activate
 
 ```shell=
 $ source ./bin/activate
-(vehicleforensics) $
+(.venv) $
 ```
 
 #### install dependencies
 
 ```shell=
-(vehicleforensics) $ pip3 install -r requirements.txt
+(.venv) $ pip3 install -r requirements.txt
 ```
 
 ##### FAQ
@@ -96,7 +96,7 @@ ref: https://github.com/pybluez/pybluez/issues/431#issuecomment-1107884273
 #### exit
 
 ```shell=
-(vehicleforensics) $ deactivate
+(.venv) $ deactivate
 $ 
 ```
 
@@ -131,7 +131,7 @@ $ docker-compose ps
 #### start main script
 
 ```shell=
-(vehicleforensics) $ python3 server_main.py
+(.venv) $ python3 server_main.py
 ```
 
 ### client side setup
@@ -145,5 +145,5 @@ $ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
 #### start main script
 
 ```
-(vehicleforensics)$ python3 client_main.py
+(.venv)$ python3 client_main.py
 ```
