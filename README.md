@@ -30,7 +30,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 ### clone project
 
 ```shell=
-$ git clone git@github.com:jason19970210/vehicleforensics.git
+$ git clone --recurse-submodules git@github.com:jason19970210/vehicleforensics.git
 ```
 
 ### virtual environment
