@@ -1,4 +1,4 @@
-# .venv
+# vehicleforensics
 a simple project which performs the vehicle data logging for digital forensics usage as PoC
 
 tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queue`, `RabbitMQ`  
@@ -32,7 +32,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 ### clone project
 
 ```shell=
-$ git clone --recurse-submodules git@github.com:jason19970210/.venv.git
+$ git clone --recurse-submodules git@github.com:jason19970210/vehicleforensics.git
 ```
 
 ### virtual environment
