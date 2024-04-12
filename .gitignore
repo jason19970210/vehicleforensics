@@ -1,6 +1,9 @@
 [core]
     filemode = false
 
+# Docker Volume
+docker_volume/
+
 # System Stuff
 **/.DS_Store
 
@@ -128,6 +131,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv/
 env/
 venv/
 ENV/
