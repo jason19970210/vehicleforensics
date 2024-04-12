@@ -10,7 +10,7 @@ services:
       - ${MONGODB_PORT}:27017
     
     volumes:
-      - ${MONGODB_VOLUMN}/${MONGODB_CONTAINER_NAME}/data/:/data/db
+      - ./${MONGODB_VOLUME}/${MONGODB_CONTAINER_NAME}/data/:/data/db
     
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_INITDB_ROOT_USERNAME}
