@@ -1,0 +1,3 @@
+[submodule "kyber_utils"]
+	path = utils/kyber_utils
+	url = git@github.com:asdfjkl/pyky.git
