@@ -1,4 +1,4 @@
-from util import montgomery_reduce, barrett_reduce, cast_to_short
+from .util import montgomery_reduce, barrett_reduce, cast_to_short
 
 NTT_ZETAS = [
     2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962,

@@ -1,4 +1,4 @@
-from params import KYBER_POLY_BYTES, KYBER_N, KYBER_ETAK512, KYBER_ETAK768_1024, KYBER_Q_INV, KYBER_Q
+from .params import KYBER_POLY_BYTES, KYBER_N, KYBER_ETAK512, KYBER_ETAK768_1024, KYBER_Q_INV, KYBER_Q
 
 def cast_to_short(x):
     y = x & 0xffff

@@ -1,11 +1,11 @@
-from poly import generate_new_polyvec, get_noise_poly, polyvec_ntt, polyvec_reduce, polyvec_pointwise_acc_mont, \
+from .poly import generate_new_polyvec, get_noise_poly, polyvec_ntt, polyvec_reduce, polyvec_pointwise_acc_mont, \
     poly_to_mont, polyvec_add, poly_from_data, poly_inv_ntt_mont, polyvec_inv_ntt, poly_add, poly_reduce, poly_sub, \
     poly_to_msg
-from params import KYBER_SYM_BYTES
+from .params import KYBER_SYM_BYTES
 from Crypto.Hash import SHA3_512
 from Crypto.Random import get_random_bytes
-from util import cast_to_byte
-from indcpa import generate_matrix, pack_private_key, pack_public_key, unpack_public_key, pack_ciphertext, unpack_ciphertext, \
+from .util import cast_to_byte
+from .indcpa import generate_matrix, pack_private_key, pack_public_key, unpack_public_key, pack_ciphertext, unpack_ciphertext, \
     unpack_private_key
 
 def generate_kyber_keys(params_k, seed = None):

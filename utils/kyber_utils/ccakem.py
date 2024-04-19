@@ -1,11 +1,11 @@
 from Crypto.Random import get_random_bytes
-from cpake import generate_kyber_keys, encrypt, decrypt
-from params import KYBER_512SK_BYTES, KYBER_768SK_BYTES, KYBER_1024SK_BYTES, KYBER_SYM_BYTES, KYBER_SS_BYTES, \
+from .cpake import generate_kyber_keys, encrypt, decrypt
+from .params import KYBER_512SK_BYTES, KYBER_768SK_BYTES, KYBER_1024SK_BYTES, KYBER_SYM_BYTES, KYBER_SS_BYTES, \
     KYBER_INDCPA_SECRETKEY_BYTES_K512, KYBER_INDCPA_PUBLICKEYBYTES_K512, \
     KYBER_INDCPA_SECRETKEY_BYTES_K768, KYBER_INDCPA_PUBLICKEYBYTES_K768, \
     KYBER_INDCPA_SECRETKEY_BYTES_K1024, KYBER_INDCPA_PUBLICKEYBYTES_K1024
 from Crypto.Hash import SHA3_256, SHA3_512, SHAKE256
-from util import cast_to_byte
+from .util import cast_to_byte
 
 def kem_keygen512():
     """

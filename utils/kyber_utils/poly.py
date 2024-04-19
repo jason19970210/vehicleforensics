@@ -1,11 +1,11 @@
-from params import KYBER_N, KYBER_Q, KYBER_POLY_COMPRESSED_BYTES_768, \
+from .params import KYBER_N, KYBER_Q, KYBER_POLY_COMPRESSED_BYTES_768, \
     KYBER_POLY_COMPRESSED_BYTES_1024, KYBER_POLY_BYTES, KYBER_SYM_BYTES, \
     KYBER_ETAK512, KYBER_ETAK768_1024, KYBER_POLYVEC_COMPRESSED_BYTES_K512, \
     KYBER_POLYVEC_COMPRESSED_BYTES_K768, KYBER_POLYVEC_COMPRESSED_BYTES_K1024
-from util import conditional_subq, cast_to_byte, cast_to_short, cast_to_int32, cast_to_long64, \
+from .util import conditional_subq, cast_to_byte, cast_to_short, cast_to_int32, cast_to_long64, \
     cbd, montgomery_reduce, barrett_reduce
-from prf import generate_prf_byte_array
-from ntt import ntt, inv_ntt, base_multiplier, NTT_ZETAS
+from .prf import generate_prf_byte_array
+from .ntt import ntt, inv_ntt, base_multiplier, NTT_ZETAS
 
 def poly_conditional_subq(r):
     """
