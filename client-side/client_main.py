@@ -2,7 +2,6 @@
 # Tester: Jason
 
 # from utils.watchdog import Watchdog
-import bluetooth as bt
 import os
 import sys
 import time
@@ -11,6 +10,7 @@ import subprocess
 from dotenv import load_dotenv
 import logging
 import config as cfg
+import argparse
 
 # Load .env & setup
 load_dotenv()
@@ -33,7 +33,7 @@ file_log.setFormatter(logging.Formatter(format_str))
 log.addHandler(file_log)
 log.setLevel(logging.DEBUG)
 
-class Client:
+class BleClient:
     def __init__(self, mac, port=1):
         self.mac = mac
         self.port = port
@@ -56,6 +56,9 @@ class Client:
         self.sock.close()
         self.sock = None
 
+    '''
+    Blocking send / recv
+    '''
     def send(self, msg):
         self.sock.send(msg)
         log.debug(f'send msg : {msg}')
@@ -75,24 +78,56 @@ class Client:
 
 
 def main():
-    client = Client(mac=cfg.MAC_ADDR)
-    client.connect()
-    time.sleep(0.2)  # Important
-    client.init()
 
-    while 1:
-        try:
-            for pid in cfg.PID_COMMAND_LIST:
-                msg = ('01' + pid + '\r').encode('utf-8')
-                # with Watchdog(2):
-                #     res = client.send(msg)
-                res = client.send(msg)
-            time.sleep(0.05)
-        except KeyboardInterrupt:
-            log.debug("** KeyboardInterrupt **")
-            client.disconnect()
-            sys.exit()
+    arg_parser = argparse.ArgumentParser(
+        # prog="", # default: sys.argv[0]
+        # description="Vehicle Forensics Cloud System - Client"
+    )
 
+    arg_parser.add_argument('--hw', '--hardware', choices=['kvaser', 'ble'], required=True)
+
+    args = arg_parser.parse_args()
+
+    # TODO: create rqbbitmq instance for produce & consume
+
+    '''
+    Use for connecting BLE dongle with sending request frame to OBD-II interface
+    '''
+    if args.hw == 'ble':
+        import bluetooth as bt
+
+        ble_client = BleClient(mac=cfg.MAC_ADDR)
+        ble_client.connect()
+        time.sleep(0.2)  # Important
+        ble_client.init()
+
+        while 1:
+            try:
+                for pid in cfg.PID_COMMAND_LIST:
+                    msg = ('01' + pid + '\r').encode('utf-8')
+                    # with Watchdog(2):
+                    #     res = client.send(msg)
+                    res = ble_client.send(msg)
+
+                    # TODO: send message to rabbitmq
+
+                time.sleep(0.05)
+            except KeyboardInterrupt:
+                log.debug("** KeyboardInterrupt **")
+                ble_client.disconnect()
+                sys.exit()
+
+    elif args.hw == 'kvaser':
+        from canlib import canlib
+
+        # TODO: get message from Kvaser & Canlib
+
+        # TODO: send message to rabbitmq
+
+    else:
+        msg = f"Argument Error: {args.hw}"
+        log.error(msg)
+        raise ValueError(msg)
 
 if __name__ == '__main__':
     main()
