@@ -15,7 +15,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
     - [virtual environment](#virtual-environment)
     - [server side setup](#server-side-setup)
     - [client side setup](#client-side-setup)
-    - [frontend setup](#front-setup)
+    - [frontend setup](#frontend-setup)
 
 ## ToDo
 ### Client Side
@@ -137,6 +137,16 @@ v20.12.2
 
 $ npm -v
 10.5.0
+```
+
+#### init
+```
+$ npm install
+```
+
+#### start main script
+```
+$ npm run dev
 ```
 
 ## FAQ
