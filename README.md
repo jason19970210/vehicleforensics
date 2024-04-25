@@ -3,17 +3,19 @@ a simple project which performs the vehicle data logging for digital forensics u
 
 tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queue`, `RabbitMQ`  
 
-![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue)
+![https://img.shields.io/badge/python-3.9-blue](https://img.shields.io/badge/python-3.9-blue?logo=python) ![https://img.shields.io/badge/nodejs-v20.12.2-brightgreen?logo=nodedotjs](https://img.shields.io/badge/nodejs-v20.12.2-brightgreen?logo=nodedotjs) ![https://img.shields.io/badge/npm-v10.5.0-red?logo=npm](https://img.shields.io/badge/npm-v10.5.0-red?logo=npm)  
 
 ## ToC
 - [Todo](#todo)
     - [client side](#client-side)
     - [server side](#server-side)
+    - [frontend side](#frontend-side)
 - [execution](#execution)
     - [clone project](#clone-project)
     - [virtual environment](#virtual-environment)
     - [server side setup](#server-side-setup)
     - [client side setup](#client-side-setup)
+    - [frontend setup](#front-setup)
 
 ## ToDo
 ### Client Side
@@ -27,6 +29,7 @@ tags: `Raspberry Pi`, `Vehicle`, `CAN Bus`, `OBD-II`, `Bluetooth`, `Message Queu
 - [ ] Kyber Implementation
 - [ ] RabbitMQ Implementation
 - [ ] MongoDB Implementation
+### Frontend
 
 ## execution
 ### clone project
@@ -125,10 +128,21 @@ $ sudo apt install -y bluetooth libbluetooth-dev libatlas-base-dev
 (.venv)$ python3 client_main.py
 ```
 
+### frontend setup
+> 2024/04/25 Added
+#### version
+```
+$ node -v
+v20.12.2
+
+$ npm -v
+10.5.0
+```
 
 ## FAQ
 ### 1. Error when `pip install pybluez`
-    > env: Windows 10
+> env: Windows 10
+
 ```
 > pip install pybluez
 
