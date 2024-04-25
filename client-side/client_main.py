@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 import logging
 import config as cfg
 import argparse
+import pika
+from canlib import canlib
 
 # Load .env & setup
 load_dotenv()
@@ -75,7 +77,90 @@ class BleClient:
             ['hcitool', 'lq', self.mac],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return p.returncode == 0
+    
+class RabbitmqConnect():
+    def __init__(self, msg):
+        self.credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PWD)
+        self.parameters = pika.ConnectionParameters(host=RABBITMQ_IP, port=RABBITMQ_PORT, credentials=self.credentials)
 
+        self.connection = pika.BlockingConnection(self.parameters)
+        self.channel = self.connection.channel()
+
+        self.channel.queue_declare(queue=RABBITMQ_QUEUE)
+        self.msg = msg
+    def rabbitmq_send(self):
+        self.channel.basic_publish(exchange='', routing_key=RABBITMQ_QUEUE, body=self.msg)
+        print(" [x] Message Sent")
+
+        time.sleep(0.0001)
+        # time.sleep(2)
+
+class RawData():
+    def __init__(self):
+        # start_time = time.time()
+
+        self.channel_number = 0
+
+    def get_chdata(self):
+        # Specific CANlib channel number may be specified as the first argument
+        self.channel_number = 0
+        if len(sys.argv) == 2:
+            self.channel_number = int(sys.argv[1])
+
+        chdata = canlib.ChannelData(self.channel_number)
+        print(f"{self.channel_number}. {chdata.channel_name} ({chdata.card_upc_no} / {chdata.card_serial_no})")
+
+
+        # Open CAN channel, virtual channels are considered okay to use
+        ch = canlib.openChannel(self.channel_number, canlib.canOPEN_ACCEPT_VIRTUAL)
+
+        print("Setting bitrate to 500 kb/s")
+        ch.setBusParams(canlib.canBITRATE_500K)
+        ch.busOn()
+
+        # Start listening for messages
+        finished = False
+        while not finished:
+            try:
+                frame = ch.read(timeout=300)
+                self.print_frame(frame)
+                self.rabbitmq_send(frame)
+            except (canlib.canNoMsg):
+                pass
+            except (canlib.canError) as ex:
+                print(ex)
+                finished = True
+
+        # Channel teardown
+        ch.busOff()
+        ch.close()
+    def msg_format(self, frame):
+        # Format the message
+        current_time = datetime.now().strftime("%Y-%m-%d-%H%M%S.%f")
+        if (frame.flags & canlib.canMSG_ERROR_FRAME != 0):
+            log_message = "***ERROR FRAME RECEIVED***"
+        else:
+            # log_message = "{id:0>8X}  {dlc}  {data}  {timestamp}          {current_time}".format(
+            log_message = "{id:0>8X}  {dlc}  {data}  {current_time}".format(
+                id=frame.id,
+                dlc=frame.dlc,
+                data=' '.join('%02x' % i for i in frame.data),
+                # timestamp=frame.timestamp,
+                current_time=current_time
+            )
+        log_message = log_message.upper()
+        return log_message
+    
+    def print_frame(self, frame):
+        log_message = self.msg_format(frame)
+        print(log_message)
+
+    
+    def rabbitmq_send(self, frame):
+        log_message = self.msg_format(frame)      
+        # Send the message to RabbitMQ
+        connect_rabbitmq = RabbitmqConnect(log_message)
+        connect_rabbitmq.rabbitmq_send()
 
 def main():
 
@@ -110,6 +195,8 @@ def main():
                     res = ble_client.send(msg)
 
                     # TODO: send message to rabbitmq
+                    connect_rabbitmq = RabbitmqConnect(res)
+                    connect_rabbitmq.rabbitmq_send()
 
                 time.sleep(0.05)
             except KeyboardInterrupt:
@@ -118,12 +205,13 @@ def main():
                 sys.exit()
 
     elif args.hw == 'kvaser':
-        from canlib import canlib
 
         # TODO: get message from Kvaser & Canlib
 
         # TODO: send message to rabbitmq
-
+        produce_rawdata = RawData()
+        produce_rawdata.get_chdata()
+        
     else:
         msg = f"Argument Error: {args.hw}"
         log.error(msg)
