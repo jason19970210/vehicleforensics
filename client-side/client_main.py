@@ -4,7 +4,7 @@
 # from utils.watchdog import Watchdog
 import os
 import sys
-import time
+import time, pytz
 from datetime import datetime
 import subprocess
 from dotenv import load_dotenv
@@ -12,15 +12,20 @@ import logging
 import config as cfg
 import argparse
 import pika
-from canlib import canlib
+from canlib import canlib, Frame
+import json
 
 # Load .env & setup
 load_dotenv()
-RABBITMQ_IP = os.getenv('RABBITMQ_IP')
-RABBITMQ_PORT = os.getenv('RABBITMQ_PORT')
-RABBITMQ_USERNAME = os.getenv('RABBITMQ_USERNAME')
-RABBITMQ_PWD = os.getenv('RABBITMQ_PWD')
-RABBITMQ_QUEUE = os.getenv('RABBITMQ_QUEUE')
+
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
+RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
+
+RABBITMQ_USERNAME = os.getenv("RABBITMQ_DEFAULT_USER")
+RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
+
+RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE")
+RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE")
 
 # Logging Config
 # https://www.loggly.com/blog/4-reasons-a-python-logging-library-is-much-better-than-putting-print-statements-everywhere/#gist21143108
@@ -80,16 +85,22 @@ class BleClient:
     
 class RabbitmqConnect():
     def __init__(self, msg):
-        self.credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PWD)
-        self.parameters = pika.ConnectionParameters(host=RABBITMQ_IP, port=RABBITMQ_PORT, credentials=self.credentials)
+        self.credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD)
+        self.parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=self.credentials)
 
         self.connection = pika.BlockingConnection(self.parameters)
         self.channel = self.connection.channel()
 
-        self.channel.queue_declare(queue=RABBITMQ_QUEUE)
-        self.msg = msg
+        self.channel.exchange_declare(exchange=RABBITMQ_EXCHANGE, exchange_type="topic", durable=True)
+        self.prop = pika.BasicProperties(content_type='application/json',
+                                content_encoding='utf-8',
+                                # headers={'key': 'value'},
+                                delivery_mode = pika.DeliveryMode.Persistent, # 2
+                               )
+
+        self.msg = json.dumps(msg)
     def rabbitmq_send(self):
-        self.channel.basic_publish(exchange='', routing_key=RABBITMQ_QUEUE, body=self.msg)
+        self.channel.basic_publish(exchange=RABBITMQ_EXCHANGE, routing_key='downlink.devices.OMC-TEST-PSN', body=self.msg , properties=self.prop)
         print(" [x] Message Sent")
 
         time.sleep(0.0001)
@@ -103,7 +114,7 @@ class RawData():
 
     def get_chdata(self):
         # Specific CANlib channel number may be specified as the first argument
-        self.channel_number = 0
+
         if len(sys.argv) == 2:
             self.channel_number = int(sys.argv[1])
 
@@ -123,8 +134,11 @@ class RawData():
         while not finished:
             try:
                 frame = ch.read(timeout=300)
-                self.print_frame(frame)
-                self.rabbitmq_send(frame)
+                if frame.id == 0x7E8:
+                    self.print_frame(frame)
+                    self.rabbitmq_send(frame)
+                time.sleep(0.1)
+            
             except (canlib.canNoMsg):
                 pass
             except (canlib.canError) as ex:
@@ -136,7 +150,7 @@ class RawData():
         ch.close()
     def msg_format(self, frame):
         # Format the message
-        current_time = datetime.now().strftime("%Y-%m-%d-%H%M%S.%f")
+        current_time = datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d %H:%M:%S ")
         if (frame.flags & canlib.canMSG_ERROR_FRAME != 0):
             log_message = "***ERROR FRAME RECEIVED***"
         else:
@@ -146,10 +160,12 @@ class RawData():
                 dlc=frame.dlc,
                 data=' '.join('%02x' % i for i in frame.data),
                 # timestamp=frame.timestamp,
-                current_time=current_time
+                current_time=current_time,
             )
         log_message = log_message.upper()
-        return log_message
+        json_message = json_format(log_message)
+        
+        return json_message
     
     def print_frame(self, frame):
         log_message = self.msg_format(frame)
@@ -157,10 +173,30 @@ class RawData():
 
     
     def rabbitmq_send(self, frame):
-        log_message = self.msg_format(frame)      
+        json_message = self.msg_format(frame)      
         # Send the message to RabbitMQ
-        connect_rabbitmq = RabbitmqConnect(log_message)
+        connect_rabbitmq = RabbitmqConnect(json_message)
         connect_rabbitmq.rabbitmq_send()
+    
+def json_format(frame):
+    # Format the message
+    parts = frame.split()
+    message_type = "ERROR" if "***ERROR" in frame else "DATA"
+    id = parts[0]
+    dlc = int(parts[1])
+    data = [parts[i] for i in range(2, 10)]
+    current_time = parts[10]
+    json_message={
+        "PSN": "OMC-TEST-PSN",
+        "zone":{
+                "message_type": message_type,
+                "id": id,
+                "dlc": dlc,
+                "data": data,
+                "current_time": current_time,
+        }
+    }
+    return json_message
 
 def main():
 
@@ -195,6 +231,8 @@ def main():
                     res = ble_client.send(msg)
 
                     # TODO: send message to rabbitmq
+                    res = json_format(res)
+
                     connect_rabbitmq = RabbitmqConnect(res)
                     connect_rabbitmq.rabbitmq_send()
 
