@@ -8,6 +8,8 @@ import ast
 
 import binascii
 import pika
+from datetime import datetime
+import logging
 
 load_dotenv()
 
@@ -19,6 +21,19 @@ RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
 
 RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE")
+
+
+log = logging.getLogger(__name__)
+format_str = '%(levelname)s\t%(asctime)s -- %(filename)s:%(lineno)s %(funcName)s -- %(message)s'
+console = logging.StreamHandler()
+console.setFormatter(logging.Formatter(format_str))
+log.addHandler(console)  # prints to console
+# file_log = logging.FileHandler(f"debug_{time.time()}.log")
+file_log = logging.FileHandler(f"debug_{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.log")
+file_log.setFormatter(logging.Formatter(format_str))
+log.addHandler(file_log)
+log.setLevel(logging.DEBUG)
+
 
 def main():
     credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD)
@@ -38,7 +53,7 @@ def main():
 
     def callback(ch, method, properties, body):
 
-        print(f" [x] Received: {method.routing_key=}, {body=}")
+        log.debug(f" [x] Received: {method.routing_key=}, {body=}")
         # time.sleep(2)
 
         # tmp = json.loads(body.decode())
@@ -51,7 +66,7 @@ def main():
     channel.basic_consume(
         queue=RABBITMQ_QUEUE, on_message_callback=callback, auto_ack=True)
 
-    print(' [*] Waiting for messages. To exit press CTRL+C')
+    log.info(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
 
 if __name__ == '__main__':
