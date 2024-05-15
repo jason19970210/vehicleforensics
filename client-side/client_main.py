@@ -15,14 +15,16 @@ import pika
 from canlib import canlib, Frame
 import json
 
+import bluetooth as bt
+
 # Load .env & setup
 load_dotenv()
 
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
 RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
 
-RABBITMQ_USERNAME = os.getenv("RABBITMQ_DEFAULT_USER")
-RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_USER = os.getenv("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.getenv("RABBITMQ_DEFAULT_PASS")
 
 RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE")
@@ -49,7 +51,7 @@ class BleClient:
     def connect(self):
         self.sock = bt.BluetoothSocket(bt.RFCOMM)
         log.info('Client connecting ...')
-        self.sock.connect((self.mac, self.port))
+        self.sock
         if self.connected:
             log.info('Connection Established')
 
@@ -83,74 +85,79 @@ class BleClient:
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return p.returncode == 0
     
-class RabbitmqConnect():
-    def __init__(self, msg):
-        self.credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD)
-        self.parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=self.credentials)
+class RabbitmqConnect:
+    def __init__(self, host: str, port:int, credentials:dict, exchange:str, queue:str):
+        self.host = host
+        self.port = port
+        self.credentials = credentials
+        self.exchange = exchange
+        self.queue = queue
 
-        self.connection = pika.BlockingConnection(self.parameters)
+        parm1 = pika.ConnectionParameters(host, port, credentials=credentials)
+        all_parm = [parm1]
+
+        self.connection = pika.BlockingConnection(all_parm)
+
         self.channel = self.connection.channel()
 
-        self.channel.exchange_declare(exchange=RABBITMQ_EXCHANGE, exchange_type="topic", durable=True)
+        self.channel.exchange_declare(self.exchange, exchange_type="topic", durable=True)
         self.prop = pika.BasicProperties(content_type='application/json',
                                 content_encoding='utf-8',
                                 # headers={'key': 'value'},
                                 delivery_mode = pika.DeliveryMode.Persistent, # 2
                                )
 
+    def rabbitmq_send(self, msg):
         self.msg = json.dumps(msg)
-    def rabbitmq_send(self):
-        self.channel.basic_publish(exchange=RABBITMQ_EXCHANGE, routing_key='downlink.devices.OMC-TEST-PSN', body=self.msg , properties=self.prop)
+        self.channel.basic_publish(self.exchange, routing_key='downlink.devices.OMC-TEST-PSN',
+                                   body=self.msg , properties=self.prop
+                                   )
         print(" [x] Message Sent")
 
         time.sleep(0.0001)
         # time.sleep(2)
 
-class RawData():
-    def __init__(self):
+class RawData:
+    def __init__(self,channel_number):
         # start_time = time.time()
+        self.channel_number = channel_number
 
-        self.channel_number = 0
-
-    def get_chdata(self):
         # Specific CANlib channel number may be specified as the first argument
-
         if len(sys.argv) == 2:
             self.channel_number = int(sys.argv[1])
 
         chdata = canlib.ChannelData(self.channel_number)
-        print(f"{self.channel_number}. {chdata.channel_name} ({chdata.card_upc_no} / {chdata.card_serial_no})")
-
+        log.info(f"{self.channel_number}. {chdata.channel_name} ({chdata.card_upc_no} / {chdata.card_serial_no})")
 
         # Open CAN channel, virtual channels are considered okay to use
-        ch = canlib.openChannel(self.channel_number, canlib.canOPEN_ACCEPT_VIRTUAL)
+        self.ch = canlib.openChannel(self.channel_number, canlib.canOPEN_ACCEPT_VIRTUAL)
+        self.set_bitrate()
 
-        print("Setting bitrate to 500 kb/s")
-        ch.setBusParams(canlib.canBITRATE_500K)
-        ch.busOn()
+    def set_bitrate(self):
+        # Set the channel bitrate
+        log.info("Setting bitrate to 500 kb/s")
+        self.ch.setBusParams(canlib.canBITRATE_500K)
+        self.ch.busOn()
 
-        # Start listening for messages
-        finished = False
-        while not finished:
-            try:
-                frame = ch.read(timeout=300)
-                if frame.id == 0x7E8:
-                    self.print_frame(frame)
-                    self.rabbitmq_send(frame)
-                time.sleep(0.1)
-            
-            except (canlib.canNoMsg):
-                pass
-            except (canlib.canError) as ex:
-                print(ex)
-                finished = True
+    def get_chdata(self):        
+        # Start listening for messages                
+        frame = self.ch.read(timeout=300)
 
+        log_message = self.msg_format(frame)
+        log.debug(log_message)
+
+        return log_message
+
+
+    def Channel_teardown(self):
         # Channel teardown
-        ch.busOff()
-        ch.close()
+        self.ch.busOff()
+        self.ch.close()          
+
+
     def msg_format(self, frame):
         # Format the message
-        current_time = datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d %H:%M:%S ")
+        current_time=datetime.now(pytz.timezone('Asia/Taipei')).strftime("%Y-%m-%d %H:%M:%S ")
         if (frame.flags & canlib.canMSG_ERROR_FRAME != 0):
             log_message = "***ERROR FRAME RECEIVED***"
         else:
@@ -167,33 +174,22 @@ class RawData():
         
         return json_message
     
-    def print_frame(self, frame):
-        log_message = self.msg_format(frame)
-        print(log_message)
-
-    
-    def rabbitmq_send(self, frame):
-        json_message = self.msg_format(frame)      
-        # Send the message to RabbitMQ
-        connect_rabbitmq = RabbitmqConnect(json_message)
-        connect_rabbitmq.rabbitmq_send()
-    
 def json_format(frame):
-    # Format the message
+    # Format the json message
     parts = frame.split()
     message_type = "ERROR" if "***ERROR" in frame else "DATA"
     id = parts[0]
     dlc = int(parts[1])
     data = [parts[i] for i in range(2, 10)]
-    current_time = parts[10]
-    json_message={
+    current_time = datetime.strptime(f"{parts[10]} {parts[11]}", "%Y-%m-%d %H:%M:%S")
+    json_message = {
         "PSN": "OMC-TEST-PSN",
-        "zone":{
-                "message_type": message_type,
-                "id": id,
-                "dlc": dlc,
-                "data": data,
-                "current_time": current_time,
+        "zone": {
+            "message_type": message_type,
+            "id": id,
+            "dlc": dlc,
+            "data": data,
+            "current_time": current_time.strftime("%Y-%m-%d %H:%M:%S"),
         }
     }
     return json_message
@@ -211,11 +207,15 @@ def main():
 
     # TODO: create rqbbitmq instance for produce & consume
 
+    rabbitmq = RabbitmqConnect(RABBITMQ_HOST, RABBITMQ_PORT,
+                               pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS),
+                               RABBITMQ_EXCHANGE, RABBITMQ_QUEUE
+                               )
     '''
     Use for connecting BLE dongle with sending request frame to OBD-II interface
     '''
     if args.hw == 'ble':
-        import bluetooth as bt
+
 
         ble_client = BleClient(mac=cfg.MAC_ADDR)
         ble_client.connect()
@@ -233,8 +233,7 @@ def main():
                     # TODO: send message to rabbitmq
                     res = json_format(res)
 
-                    connect_rabbitmq = RabbitmqConnect(res)
-                    connect_rabbitmq.rabbitmq_send()
+                    rabbitmq.rabbitmq_send(res)
 
                 time.sleep(0.05)
             except KeyboardInterrupt:
@@ -247,8 +246,24 @@ def main():
         # TODO: get message from Kvaser & Canlib
 
         # TODO: send message to rabbitmq
-        produce_rawdata = RawData()
-        produce_rawdata.get_chdata()
+        rawdata = RawData(0)
+        finished = False
+        while not finished:
+            try:
+
+                res=rawdata.get_chdata()
+                rabbitmq.rabbitmq_send(res)
+
+            except (canlib.canNoMsg):
+                pass
+            except (canlib.canError) as ex:
+                log.error(ex)
+                finished = True
+            except (pika.exceptions.AMQPError) as ex:
+                log.error(f"RabbitMQ error: {ex}")
+            except (Exception) as ex:
+                log.error(f"Unexpected error: {ex}")
+        rawdata.Channel_teardown()
         
     else:
         msg = f"Argument Error: {args.hw}"
