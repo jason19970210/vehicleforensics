@@ -93,7 +93,7 @@ class RabbitmqConnect:
         self.exchange = exchange
         self.queue = queue
 
-        parm1 = pika.ConnectionParameters(host, port, credentials=credentials)
+        parm1 = pika.ConnectionParameters(host=self.host, port=self.port, credentials=self.credentials)
         all_parm = [parm1]
 
         self.connection = pika.BlockingConnection(all_parm)
