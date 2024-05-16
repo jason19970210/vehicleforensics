@@ -107,9 +107,9 @@ class RabbitmqConnect:
                                 delivery_mode = pika.DeliveryMode.Persistent, # 2
                                )
 
-    def rabbitmq_send(self, msg):
+    def rabbitmq_send(self, msg, routing_key):
         self.msg = json.dumps(msg)
-        self.channel.basic_publish(self.exchange, routing_key='downlink.devices.OMC-TEST-PSN',
+        self.channel.basic_publish(self.exchange, routing_key=routing_key,
                                    body=self.msg , properties=self.prop
                                    )
         print(" [x] Message Sent")
@@ -230,8 +230,8 @@ def main():
 
                     # TODO: send message to rabbitmq
                     res = json_format(res)
-
-                    rabbitmq.rabbitmq_send(res)
+                    routing_key = 'vehicle.ble'
+                    rabbitmq.rabbitmq_send(res, routing_key)
 
                 time.sleep(0.05)
             except KeyboardInterrupt:
@@ -250,8 +250,9 @@ def main():
             try:
 
                 res=rawdata.get_chdata()
-                res = json_format(res)
-                rabbitmq.rabbitmq_send(res)
+                res=json_format(res)
+                routing_key =  'vehicle.kvaser' 
+                rabbitmq.rabbitmq_send(res, routing_key)
 
             except (canlib.canNoMsg):
                 pass
@@ -271,3 +272,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
