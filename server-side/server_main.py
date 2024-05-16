@@ -16,8 +16,8 @@ load_dotenv()
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
 RABBITMQ_PORT = int(os.getenv("RABBITMQ_PORT"))
 
-RABBITMQ_USERNAME = os.getenv("RABBITMQ_DEFAULT_USER")
-RABBITMQ_PASSWORD = os.getenv("RABBITMQ_DEFAULT_PASS")
+RABBITMQ_DEFAULT_USER = os.getenv("RABBITMQ_DEFAULT_USER")
+RABBITMQ_DEFAULT_PASS = os.getenv("RABBITMQ_DEFAULT_PASS")
 
 RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE")
@@ -75,7 +75,7 @@ class RabbitmqConnect:
         
 def main():    
     rabbitmq = RabbitmqConnect(RABBITMQ_HOST, RABBITMQ_PORT, 
-                               pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD), 
+                               pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS), 
                                RABBITMQ_EXCHANGE, RABBITMQ_QUEUE
                                )    
     rabbitmq.start_consuming()
