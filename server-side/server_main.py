@@ -34,24 +34,28 @@ file_log.setFormatter(logging.Formatter(format_str))
 log.addHandler(file_log)
 log.setLevel(logging.DEBUG)
 
+class RabbitmqConnect:
+    def __init__(self, host, port, credentials, exchange, queue):
+        self.host = host
+        self.port = port
 
-def main():
-    credentials = pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD)
+        self.exchange = exchange
+        self.queue = queue
+        self.credentials = credentials
 
-    parm1 = pika.ConnectionParameters(
-        host=RABBITMQ_HOST, port=RABBITMQ_PORT, credentials=credentials)
+        parm1 = pika.ConnectionParameters(
+            host=self.host, port=self.port, credentials=self.credentials)
 
-    all_parm = [parm1]
+        all_parm = [parm1]
 
-    connection = pika.BlockingConnection(all_parm)
-    channel = connection.channel()
+        self.connection = pika.BlockingConnection(all_parm)
+        self.channel = self.connection.channel()
 
-    channel.exchange_declare(exchange=RABBITMQ_EXCHANGE, exchange_type="topic", durable=True)
-    channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True, exclusive=False, auto_delete=False)
-    channel.queue_bind(exchange=RABBITMQ_EXCHANGE, queue=RABBITMQ_QUEUE, routing_key="#", arguments=None)
+        self.channel.exchange_declare(exchange=self.exchange, exchange_type="topic", durable=True)
+        self.channel.queue_declare(queue=self.queue, durable=True, exclusive=False, auto_delete=False)
+        self.channel.queue_bind(exchange=self.exchange, queue=self.queue, routing_key="vehicle.#", arguments=None)
 
-
-    def callback(ch, method, properties, body):
+    def callback(self, ch, method, properties, body):
 
         log.debug(f" [x] Received: {method.routing_key=}, {body=}")
         # time.sleep(2)
@@ -63,11 +67,18 @@ def main():
 
         pass
 
-    channel.basic_consume(
-        queue=RABBITMQ_QUEUE, on_message_callback=callback, auto_ack=True)
-
-    log.info(' [*] Waiting for messages. To exit press CTRL+C')
-    channel.start_consuming()
-
+    def start_consuming(self):
+        self.channel.basic_consume(
+            queue=self.queue, on_message_callback=self.callback, auto_ack=True)
+        log.info(' [*] Waiting for messages. To exit press CTRL+C')
+        self.channel.start_consuming()
+        
+def main():    
+    rabbitmq = RabbitmqConnect(RABBITMQ_HOST, RABBITMQ_PORT, 
+                               pika.PlainCredentials(RABBITMQ_USERNAME, RABBITMQ_PASSWORD), 
+                               RABBITMQ_EXCHANGE, RABBITMQ_QUEUE
+                               )    
+    rabbitmq.start_consuming()
+    
 if __name__ == '__main__':
     main()
