@@ -169,10 +169,8 @@ class RawData:
                 # timestamp=frame.timestamp,
                 current_time=current_time,
             )
-        log_message = log_message.upper()
-        json_message = json_format(log_message)
-        
-        return json_message
+        log_message = log_message.upper()        
+        return log_message
     
 def json_format(frame):
     # Format the json message
@@ -252,6 +250,7 @@ def main():
             try:
 
                 res=rawdata.get_chdata()
+                res = json_format(res)
                 rabbitmq.rabbitmq_send(res)
 
             except (canlib.canNoMsg):
