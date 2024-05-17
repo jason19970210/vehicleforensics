@@ -172,7 +172,7 @@ class RawData:
         log_message = log_message.upper()        
         return log_message
     
-def json_format(frame):
+def json_format(frame, routing_key):
     # Format the json message
     parts = frame.split()
     message_type = "ERROR" if "***ERROR" in frame else "DATA"
@@ -180,8 +180,9 @@ def json_format(frame):
     dlc = int(parts[1])
     data = [parts[i] for i in range(2, 10)]
     current_time = datetime.strptime(f"{parts[10]} {parts[11]}", "%Y-%m-%d %H:%M:%S")
+    routing_key = routing_key
     json_message = {
-        "PSN": "OMC-TEST-PSN",
+        "hardware" : routing_key,
         "zone": {
             "message_type": message_type,
             "id": id,
@@ -229,8 +230,8 @@ def main():
                     res = ble_client.send(msg)
 
                     # TODO: send message to rabbitmq
-                    res = json_format(res)
                     routing_key = 'vehicle.ble'
+                    res = json_format(res, routing_key)
                     rabbitmq.rabbitmq_send(res, routing_key)
 
                 time.sleep(0.05)
@@ -250,8 +251,8 @@ def main():
             try:
 
                 res=rawdata.get_chdata()
-                res=json_format(res)
                 routing_key =  'vehicle.kvaser' 
+                res=json_format(res, routing_key)
                 rabbitmq.rabbitmq_send(res, routing_key)
 
             except (canlib.canNoMsg):
